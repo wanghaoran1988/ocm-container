@@ -43,35 +43,50 @@ FROM fedora:latest as builder
 # jq is a pre-req for making parsing of download urls easier
 RUN dnf install -y jq rhash unzip
 
+# Add `oc` to interact with openshift clusters (similar to kubectl)
 # Replace version with a version number to pin a specific version (eg: "4.7.8")
 ARG OC_VERSION="stable"
 ENV OC_URL="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/${OC_VERSION}"
 
-# Replace version with a version number to pin a specific version (eg: "4.7.8")
-ARG ROSA_VERSION="tags/v1.1.0"
-ENV ROSA_URL="https://api.github.com/repos/openshift/rosa/releases/${ROSA_VERSION}"
-
+# Add `ocm` utility for interacting with the ocm-api
 # Replace "/latest" with "/tags/{tag}" to pin to a specific version (eg: "/tags/v0.4.0")
-ARG OSDCTL_VERSION="tags/v0.4.5"
-ENV OSDCTL_URL="https://api.github.com/repos/openshift/osdctl/releases/${OSDCTL_VERSION}"
+# the SHORT_URL is for checking the releasenotes when a version updates
+ARG OCM_VERSION="tags/v0.1.60"
+ENV OCM_SHORT_URL="openshift-online/ocm-cli"
+ENV OCM_URL="https://api.github.com/repos/${OCM_SHORT_URL}/releases/${OCM_VERSION}"
 
+# Add `osdctl` utility for common OSD commands
 # Replace "/latest" with "/tags/{tag}" to pin to a specific version (eg: "/tags/v0.4.0")
-ARG OCM_VERSION="tags/v0.1.55"
-ENV OCM_URL="https://api.github.com/repos/openshift-online/ocm-cli/releases/${OCM_VERSION}"
+# the SHORT_URL is for checking the releasenotes when a version updates
+ARG OSDCTL_VERSION="tags/v0.7.0"
+ENV OSDCTL_SHORT_URL="openshift/osdctl"
+ENV OSDCTL_URL="https://api.github.com/repos/${OSDCTL_SHORT_URL}/releases/${OSDCTL_VERSION}"
 
+# Add `rosa` utility for interacting with rosa clusters
+# Replace "/latest" with "/tags/{tag}" to pin to a specific version (eg: "/tags/v0.1.4")
+# the SHORT_URL is for checking the releasenotes when a version updates
+ARG ROSA_VERSION="tags/v1.1.6"
+ENV ROSA_SHORT_URL="openshift/rosa"
+ENV ROSA_URL="https://api.github.com/repos/${ROSA_SHORT_URL}/releases/${ROSA_VERSION}"
+
+# Add `velero` utility for quick backup verification
 # Replace "/latest" with "/tags/{tag}" to pin to a specific version (eg: "/tags/v0.4.0")
-ARG VELERO_VERSION="tags/v1.6.2"
-ENV VELERO_URL="https://api.github.com/repos/vmware-tanzu/velero/releases/${VELERO_VERSION}"
+# the SHORT_URL is for checking the releasenotes when a version updates
+ARG VELERO_VERSION="tags/v1.7.1"
+ENV VELERO_SHORT_URL="vmware-tanzu/velero"
+ENV VELERO_URL="https://api.github.com/repos/${VELERO_SHORT_URL}/releases/${VELERO_VERSION}"
+
+# Add `yq` utility for programatic yaml parsing
+# the SHORT_URL is for checking the releasenotes when a version updates
+ARG YQ_VERSION="tags/v4.16.1"
+ENV YQ_SHORT_URL="mikefarah/yq"
+ENV YQ_URL="https://api.github.com/repos/${YQ_SHORT_URL}/releases/${YQ_VERSION}"
 
 # Replace AWS client zipfile with specific file to pin to a specific version
 # (eg: "awscli-exe-linux-x86_64-2.0.30.zip")
 ARG AWSCLI_VERSION="awscli-exe-linux-x86_64.zip"
 ENV AWSCLI_URL="https://awscli.amazonaws.com/${AWSCLI_VERSION}"
 ENV AWSSIG_URL="https://awscli.amazonaws.com/${AWSCLI_VERSION}.sig"
-
-# Add `yq` utility for programatic yaml parsing
-ARG YQ_VERSION="latest"
-ENV YQ_URL="https://api.github.com/repos/mikefarah/yq/releases/${YQ_VERSION}"
 
 # Directory for the extracted binaries, etc
 RUN mkdir -p /out
