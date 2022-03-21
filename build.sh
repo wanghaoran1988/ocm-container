@@ -49,17 +49,8 @@ done
 ### cd locally
 cd $(dirname $0)
 
-### Load config
-export OCM_CONTAINER_CONFIG="${HOME}/.config/ocm-container/env.source"
+export CONTAINER_SUBSYS=$(which podman 2>/dev/null || which docker 2>/dev/null) 
 
-export CONTAINER_SUBSYS="sudo docker"
-
-if [ ! -f ${OCM_CONTAINER_CONFIG} ]; then
-    echo "Cannot find config file, exiting";
-    exit 1;
-fi
-
-source ${OCM_CONTAINER_CONFIG}
 
 ### start build
 
